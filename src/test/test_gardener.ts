@@ -1,18 +1,24 @@
 /// <reference path="../../typings/tsd.d.ts" />
 'use strict';
+// set env variables
+var user = "user"
+var pass = "12345mypaswword"
+
+process.env.GAR_USERNAME = user
+process.env.GAR_PASSWORD = pass
 
 // import the moongoose helper utilities
 var request = require('supertest')
 var should = require('chai').should()
 import server from '../server'
 
-describe('addition', function () {
+describe('Port Configuration', function () {
   var token = ""
   // get authentication token
   before(function(done){
     request(server)
       .post('/users/login')
-      .send({username:"user",password:"1234"})
+      .send({username:user,password:pass})
       .end(function(err,res){
         token = res.body.token
         done()
@@ -32,10 +38,36 @@ describe('addition', function () {
        done()
      })
  })
+ //... previous test
+ it('should allow to get the current port', function (done) {
+   request(server)
+     .get('/api/ports/main')
+     .set('x-access-token', token)
+     .expect(200)
+     .expect('Content-Type', /application\/json/)
+     .end(function (err, res) {
+       should.not.exist(err)
+       res.body.should.have.property("port")
+       done()
+     })
+  })
+  //... previous test
+  it('should allow to set the current port', function (done) {
+    request(server)
+      .post('/api/ports/main')
+      .set('x-access-token', token)
+      .send({port:"COM1"})
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+      .end(function (err, res) {
+        should.not.exist(err)
+        res.body.should.have.property("port")
+        done()
+      })
+   })
 })
 
-var user = "user"
-var pass = "12345"
+
 
 describe('login', function () {
  //... previous test
@@ -51,13 +83,13 @@ describe('login', function () {
  it('should return a token for a valid user and password', function (done) {
    request(server)
      .post('/users/login')
-     .send({username:"user",password:"1234"})
+     .send({username:user,password:pass})
      .expect(200)
      .expect('Content-Type', /application\/json/)
      .end(function(err,res){
        res.body.should.have.property('token')
        res.body.should.have.property('success')
-       done() 
+       done()
      })
  })
 

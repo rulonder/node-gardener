@@ -1,13 +1,16 @@
 /// <reference path="../typings/tsd.d.ts" />
 var SerialPort = require ("serialport")
+var _ = require("lodash")
 import * as Promise from "bluebird"
 
 export interface BoardI {
   measureSoil : Function
   openValve : Function
   closeValve : Function
+  setPort: Function
+  getPort: Function
 }
- 
+
 var options = {
   baudrate :9600,
   parser: SerialPort.parsers.readline("\n")
@@ -19,7 +22,7 @@ export class Board implements BoardI {
   private dataHandler : Function
   private isValveOpen : boolean
 
-  constructor (dataHandler,port) {
+  constructor (dataHandler) {
     this.dataHandler = dataHandler
     this.port = null
     this.findPort()
@@ -28,21 +31,29 @@ export class Board implements BoardI {
 
   setPort(port:string){
     this.port = port
-    this.serialPort = new SerialPort.SerialPort(this.port,options)
-    this.serialPort.on('data', (data) => {
-      this.dataParse(data)
+    return new Promise<Object>((res,rej)=>{
+      try {
+        this.serialPort = new SerialPort.SerialPort(this.port,options)
+        this.serialPort.on('data', (data) => {
+          this.dataParse(data)
+        })
+        res( { success:true } )
+      } catch (err) {
+        rej({error:"Invalid Port"})
+      }
     })
+
   }
 
   getPort(){
     return this.port
   }
-
+  // find the first available port with usb in the pnpId
   findPort(){
     getPorts()
     .then((data)=>{
       for (let port in data) {
-        if("USB" in port.pnpId){
+        if(_.includes('USB', port.pnpId)){
         this.setPort( port.comName)
         break
         }
@@ -54,7 +65,15 @@ export class Board implements BoardI {
     })
   }
   dataParse(data){
-    this.dataHandler(data)
+    try{
+      var data = JSON.parse(data.toString())
+      var value:string = data.value
+      var type :string = data.type
+      this.dataHandler(value,type)
+    }catch(err){
+      console.log("invalid data")
+    }
+
   }
   measureSoil(){
     this.serialPort.write("r")
@@ -69,8 +88,8 @@ export class Board implements BoardI {
 
 export function getPorts() {
   return new Promise<[Object]>((res,rej)=>{
-    SerialPort.list(function(err, ports) {
-     if (err) rej("No ports ")
-     res(ports)
+    SerialPort.list((err, ports) => {
+     if (err) rej("No ports available")
+     else res(ports)
   })})
 }

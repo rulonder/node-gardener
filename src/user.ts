@@ -6,7 +6,7 @@ import * as jwt from 'jsonwebtoken'
 
 var shasum = crypto.createHash('sha256')
 
-var SECRET="ThisIsAJokegdlufiwswqusoiqwu8ed7wq98"
+var SECRET= process.env.GAR_SECRET || "ThisIsAJokegdlufiwswqusoiqwu8ed7wq98"
 var USER = process.env.GAR_USERNAME || "user"
 var PASSWORD = process.env.GAR_PASSWORD || "1234"
 
@@ -45,7 +45,7 @@ class UserHandler {
             return res.status(401).json({ success: false, message: 'Failed to authenticate' });
           } else {
             // if everything is good, save to request for use in other routes
-            req.decoded = decoded; 
+            req.decoded = decoded;
             next();
           }
         });
