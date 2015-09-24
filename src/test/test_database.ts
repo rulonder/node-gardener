@@ -14,28 +14,30 @@ import * as db from "../database"
 
 
 describe('Databse Handler', function () {
-  var database = new db.Database()
+  var database = new db.Database("measurement_test")
   var j  = 0
   // get authentication token
   before(function(done){
     var values = []
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
         values.push(i)
     }
-    Promise.all(values.map((data)=>{database.addRecord(data,'humidity')})).then(
+    var insertions = values.map((data)=>{return database.addRecord(data,'humidity')})
+    Promise.all(insertions).then(
       (results)=>{
-        console.log(results)
         done()
-      }
-    )
+    }
+  )
   })
  //... previous te
  it('should return an array of values', function (done) {
-   console.log("Start test")
-   database.getRecord("humidity").then(
-     (data) => {
-      console.log("Start test2")
-       data.should.be.an("array")
+   database.getRecord("humidity",100).then(
+     (data:any) => {
+       var records = data.values
+       records.should.be.an("array")
+       records[0].should.have.property("value")
+       records[0].should.have.property("created")
+       records[0].should.have.property("type")
        done()
      }
    ).catch(

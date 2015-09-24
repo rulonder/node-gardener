@@ -20,7 +20,7 @@ export class Gardener implements GardenerInt {
     this.board = new Board(this.addRecord )
   }
   getState  ( type: string) {
-      return this.db.getRecord("humidity" )
+      return this.db.getRecord("humidity",100 )
   }
 
   addRecord (value: number, type: string) {

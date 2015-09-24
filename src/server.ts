@@ -12,7 +12,7 @@ var app = express()                 // define our app using express
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true 
+  extended: true
 }))
 
 var port : number = process.env.PORT || 8080       // set our port
@@ -30,5 +30,6 @@ function repeatQuery(req: express.Request, res: express.Response) {
 app.use('/api', useroruter.validateUserMW)
 app.use('/api', router.router)
 app.use('/users',useroruter.router)
+app.use('/',express.static('public'))
 
 export default app

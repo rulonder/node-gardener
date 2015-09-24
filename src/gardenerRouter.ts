@@ -5,7 +5,7 @@ import * as garden from './gardener'
 //import * as Gardener   from 'gardener';
 import * as db from "./database"
 
-var database = new db.Database()
+var database = new db.Database("measurements")
 
 var gardener = new garden.Gardener(database)
 // ROUTES FOR OUR API

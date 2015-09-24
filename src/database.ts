@@ -1,6 +1,11 @@
 /// <reference path="../typings/tsd.d.ts" />
-import * as sqlize from "sequelize"
 import * as Promise from "bluebird"
+
+var sqlite3 = require('sqlite3').verbose()
+
+var db = new sqlite3.Database('./database.sqlite')
+
+
 
 
 export interface DatabaseI {
@@ -10,59 +15,53 @@ export interface DatabaseI {
 
 
 export class Database implements DatabaseI {
-  private sequelize: sqlize.Sequelize
-  private measurements: any
+  private database : string
   // Contructor
-  constructor(database: string = 'database') {
-
-    this.sequelize = new sqlize(database, 'username', 'password', {
-      dialect: 'sqlite',
-      logging: false,
-      // SQLite only
-      storage: './database.sqlite'
-    })
-
-    this.measurements = this.sequelize.define('Measurements', {
-      value: { type: sqlize.DOUBLE },
-      type: { type: sqlize.STRING },
-      date: { type: sqlize.DATE }
-    }, {})
-  }
+  constructor(database: string) {
+    this.database = database
+    db.serialize(()=> {
+      db.run("CREATE TABLE if not exists " + this.database +
+             '(id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
+             'type TEXT, ' +
+             'created DATETIME DEFAULT CURRENT_TIMESTAMP, '+
+             'value REAL)', (err) => {
+               if(err !== null) {
+                 console.log(err)
+               }
+             })
+     })
+   }
 
   addRecord(value: number, type: string) {
-    var date: Date = new Date()
-    return this.sequelize.sync({force: true}).then(() => {
-      return this.measurements.create({
-        value: value,
-        type: type,
-        date: date
+    return new Promise((resolve,reject)=>{
+      var sqlRequest = "INSERT INTO "+this.database+" (type, value) " +
+               "VALUES('" + type + "', '" + value + "')"
+      db.run(sqlRequest, function(err) {
+        if(err !== null) {
+          reject(err);
+        }
+        else {
+          resolve({ success:true})
+        }
       })
-    }).then((data) => {
-      return data
-    }).catch((e) => {
-      return { error: "Invalid request" }
     })
   }
 
-  getRecord(type: string, nRecords: number = 100) {
-    var self = this
-    return this.sequelize.sync({force: true}).then(() => {
-      var dayAgo = Number(new Date()) - 24 * 60 * 60 * 1000
-      console.log("Requesting")
-      return self.measurements.findAll({
-        limit: nRecords,
-        where: {
-          date: {
-            $gt: new Date(dayAgo)
-          },
-          type: type
+  getRecord(type: string, nRecords: number ) {
+    return new Promise((resolve,reject)=>{
+      db.all(' SELECT * '+
+             ' FROM '+this.database+
+             " WHERE created >= date('now', '-1 day')"+
+             ' ORDER BY created LIMIT '+nRecords, function(err, row) {
+        if(err !== null) {
+          // Express handles errors via its next function.
+          // It will call the next operation layer (middleware),
+          // which is by default one that handles errors.
+          reject(err);
         }
-      }).then((data) => {
-        console.log("data is ::::", data)
-        return data
-      }).catch(err=> {
-        console.log("error", err)
-        return err
+        else {
+          resolve({ values:row})
+        }
       })
     })
   }

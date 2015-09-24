@@ -33,7 +33,12 @@ gulp.task('build', function () {
           .pipe(gulp.dest('deploy'));
 })
 
-gulp.task('default',['build','test'],function cb(cd) {
+gulp.task('static', function(){
+  return gulp.src('static/**/*.*')
+    .pipe(gulp.dest('deploy/static'))
+})
+
+gulp.task('default',['static','build','test'],function cb(cd) {
   process.exit()
   // body...
 })
