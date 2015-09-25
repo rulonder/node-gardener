@@ -43,7 +43,7 @@ describe('Databse Handler', function () {
    ).catch(
      (err) =>  {
       console.log(err)
-      done()
+      done(err)
      }
    )
  })
