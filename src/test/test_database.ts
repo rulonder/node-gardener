@@ -13,7 +13,7 @@ var should = require('chai').should()
 import * as db from "../database"
 
 
-describe('Databse Handler', function () {
+describe('Database Handler', function () {
   var database = new db.Database("measurement_test")
   var j  = 0
   // get authentication token

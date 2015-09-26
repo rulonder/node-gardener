@@ -17,6 +17,7 @@
         "src/gardenerRouter.ts",
         "src/index.ts",
         "src/server.ts",
+        "src/test/test_board.ts",
         "src/test/test_database.ts",
         "src/test/test_gardener.ts",
         "src/user.ts",

@@ -17,7 +17,7 @@ export class Gardener implements GardenerInt {
 
   constructor(db){
     this.db = db
-    this.board = new Board(this.addRecord )
+    this.board = new Board(this.addRecord , (err)=> {console.log(err)})
   }
   getState  ( type: string) {
       return this.db.getRecord("humidity",100 )
