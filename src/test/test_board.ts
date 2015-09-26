@@ -15,7 +15,7 @@ describe("Board (only if avalible in port, HW in the loop)", () => {
     }, (err) => {
         done(err)
       });
-    board.setPort("COM3").then((status) => {
+    board.setPort("rfcomm0").then((status) => {
       console.log("open",status)
       board.measureEnv()
     })
