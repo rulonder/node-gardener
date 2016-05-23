@@ -56,7 +56,7 @@ describe('Port Configuration', function () {
     request(server)
       .post('/api/ports/main')
       .set('x-access-token', token)
-      .send({port:"COM1"})
+      .send({port:"/dev/rfcomm0"})
       .expect(200)
       .expect('Content-Type', /application\/json/)
       .end(function (err, res) {

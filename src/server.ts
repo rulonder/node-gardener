@@ -21,15 +21,9 @@ var port : number = process.env.PORT || 8080       // set our port
 // let TODO
 // rEGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.get('/', (req, res) => {
-    res.send('Hello TypeScript')
-})
-function repeatQuery(req: express.Request, res: express.Response) {
-    res.json(req.query)
-}
 app.use('/api', useroruter.validateUserMW)
 app.use('/api', router.router)
 app.use('/users',useroruter.router)
-app.use('/',express.static('public'))
+app.use('/',express.static(__dirname+'/static'))
 
 export default app

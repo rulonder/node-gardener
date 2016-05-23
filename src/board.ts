@@ -21,16 +21,24 @@ export class Board implements BoardI {
   private serialPort: any
   private port: string
   private dataHandler: Function
-  private errHandler: Function
+  private errHandlerFunc: Function
   private isValveOpen: boolean
 
   constructor(dataHandler, errHandler) {
     this.dataHandler = dataHandler
-    this.errHandler = errHandler
+    this.errHandlerFunc = errHandler
     this.port = null
     this.findPort()
 
   }
+
+  errHandler (err) {
+   // try reconnect to Port
+   this.setPort(this.getPort()).catch(err =>{
+     this.errHandlerFunc(err)
+   })
+  }
+
   // set the port of the board
   setPort(port: string) {
     this.port = port
@@ -39,21 +47,14 @@ export class Board implements BoardI {
         this.serialPort = new SerialPort.SerialPort(this.port, options,false)
         this.serialPort.open((error) => {
           if (error) {
-            console.log('failed to open: ' + error)
             rej({ error: "Invalid Port" })
           } else {
-            console.log('open')
             this.serialPort.on('data', (data) => {
-              console.log('sending dat ');
               this.dataParse(data)
             })
             this.serialPort.on('error', (err) => {
               this.errHandler(err)
             })
-            this.serialPort.write("e\n", function(err, results) {
-              console.log('err ' + err);
-              console.log('results ' + results);
-            });
             res({ success: true })
           }
         })
@@ -79,28 +80,26 @@ export class Board implements BoardI {
     })
       .catch((err) => {
       this.port = null
-      console.log(err)
     })
   }
   // parse the receved data
   dataParse(data) {
     try {
-      console.log(data)
       var data = JSON.parse(data)
       if (data.error != 0) throw "invalid record"
       var value: number = data.value
       var type: string = data.type
       this.dataHandler(value, type)
     } catch (err) {
-      console.log("invalid data", err)
       this.errHandler(err)
     }
   }
   // measure soil humidity
   measureSoil() {
     this.serialPort.write("r", (err, results) => {
-      console.log('err ' + err);
-      console.log('results ' + results);
+      if (err) {
+        this.errHandler(err)
+      }
     })
   }
   // measure enviroment temp & humidity

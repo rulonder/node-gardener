@@ -51,8 +51,8 @@ export class Database implements DatabaseI {
     return new Promise((resolve,reject)=>{
       db.all(' SELECT * '+
              ' FROM '+this.database+
-             " WHERE created >= date('now', '-1 day')"+
-             ' ORDER BY created LIMIT '+nRecords, function(err, row) {
+             " WHERE created >= date('now', '-1 day') AND type = " +'"' +type +'"' +
+             ' ORDER BY created DESC LIMIT '+nRecords, function(err, row) {
         if(err !== null) {
           // Express handles errors via its next function.
           // It will call the next operation layer (middleware),

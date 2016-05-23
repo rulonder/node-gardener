@@ -8,6 +8,12 @@ import * as db from "./database"
 var database = new db.Database("measurements")
 
 var gardener = new garden.Gardener(database)
+gardener.setPort("/dev/rfcomm0").then(function(port){
+      return console.log("using port : "+ port)
+    })
+    .catch(function(err){
+      return console.log("Error:: cannot open  port : ")
+    })
 // ROUTES FOR OUR API
 // =============================================================================
 export var router : express.Router = express.Router(); // get an instance of the express Router
@@ -18,11 +24,6 @@ router.get('/measurements/:type',  (req  , res ) => {
       })
 });
 
-router.post('/measurements',  (req  , res ) => {
-    gardener.addRecord(req.body.value,req.body.type).then((data) => {
-        return res.json(data)
-      })
-});
 
 router.get('/ports',  (req  , res ) => {
     gardener.listPorts()

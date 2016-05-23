@@ -1,17 +1,117 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello React</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  </head>
-  <body>
-    <div id="content"></div>
-    <script type="text/jsx">
-      // Your code here
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello React</title>
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.red-indigo.min.css" />
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+
+  <style type="text/css">
+    svg {
+      font-family: "Helvetica Neue", Helvetica;
+    }
+
+    .demo-card-wide.mdl-card {
+      width: 650px;
+      margin: 10px;
+    }
+
+    .mdl-card__title > h4 {
+      margin-top: 0;
+    }
+
+    .line {
+      fill: none;
+      stroke: #000;
+      stroke-width: 2px;
+    }
+
+    .linePath {
+      fill: none;
+      stroke: red;
+      stroke-width: 2px;
+    }
+
+    .linePathBlue {
+      fill: none;
+      stroke: rgb(0, 94, 255);
+      stroke-width: 2px;
+    }
+
+    div.bar {
+      display: inline-block;
+      width: 20px;
+      height: 75px;
+      /* We'll override this later */
+      background-color: teal;
+      margin-right: 2px;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="content"></div>
+  <h1>Soil Humidity</h1>
+  <div id="Controls" class="demo-card-wide mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__title mdl-card--expand">
+      <h4>
+        Controls
+      </h4>
+    </div>
+    <div class="mdl-card__actions mdl-card--border">
+      <a onclick='openValve()' class="mdl-button mdl-js-ripple-effect mdl-js-button mdl-button--raised mdl-button--colored">
+          Open Valve
+        </a>
+      <a onclick='closeValve()' class="mdl-button mdl-js-ripple-effect mdl-js-button mdl-button--raised mdl-button--accent">
+          Close Valve
+        </a>
+    </div>
+
+  </div>
+  <div id="chart" class="demo-card-wide mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__title mdl-card--expand">
+      <h4>
+        Humidity
+      </h4>
+    </div>
+  </div>
+  <div id="chart2" class="demo-card-wide mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__title mdl-card--expand">
+      <h4>
+        Temperature
+      </h4>
+    </div>
+  </div>
+  <div id="chart3" class="demo-card-wide mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__title mdl-card--expand">
+      <h4>
+        Soil
+      </h4>
+    </div>
+  </div>
+  <script type="text/jsx">
+    // Your code here
+  </script>
+  <script src="javascript/app.js"></script>
+</body>
+
 </html>
