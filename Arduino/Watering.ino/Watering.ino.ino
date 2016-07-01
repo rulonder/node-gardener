@@ -5,7 +5,7 @@
 
 /* Use a variable called byteRead to temporarily store
    the data coming from the computer */
-Byte byteRead;
+int byteRead;
 // configure dht11 sensor
 int idDHT11pin = 2; //Digital pin for comunications
 int idDHT11intNumber = 0; //interrupt number (must be the one that use the previus defined pin
@@ -52,7 +52,7 @@ void loop() {
   }
 }
 // return an error through the serial
-void printError(char* ErrorCode){
+void printError(const char* ErrorCode){
   char buffer[256];
   root["error"] = ErrorCode;
   root.printTo(buffer, sizeof(buffer));

@@ -1,31 +1,58 @@
-/// <reference path="../../typings/tsd.d.ts" />
-'use strict';
-import * as Promise from "bluebird"
+/// <reference path="../../typings/index.d.ts" />
+"use strict";
 // import the moongoose helper utilities
-var should = require('chai').should()
-import {Board, BoardI, getPorts} from "../board"
+const should = require("chai").should()
+import {Board, BoardI} from "../board"
+let SerialPort2 = require('virtual-serialport')
+let SerialPort = require('serialport')
+// mock SerialPort list function
+SerialPort2.list = (cb) => {
+  const fake_ports = [ { comName: '/dev/cu.Bluetooth-Incoming-Port',
+    manufacturer: undefined,
+    serialNumber: undefined,
+    pnpId: undefined,
+    locationId: undefined,
+    vendorId: undefined,
+    productId: undefined },
+  { comName: '/dev/cu.wchusbserial12240',
+    manufacturer: undefined,
+    serialNumber: undefined,
+    pnpId: undefined,
+    locationId: '0x12240000',
+    vendorId: '0x1a26',
+    productId: '0x7223' } ]
+   cb(null, fake_ports)
 
+}
 
+SerialPort2.parsers={
+  raw :()=>{}
+  , readline : ()=>{}
+}
+
+// Actual testing
 describe("Board (only if avalible in port, HW in the loop)", () => {
-  var count = 0
-  it('return a value and a type when asked for read ', function(done) {
-    var board : BoardI = new Board((value, type) => {
+  it("return a value and a type when asked for read ", function(done) {
+    const board : BoardI = new Board(SerialPort,
+    (  value, type) => {
       value.should.be.an("number");
       type.should.be.an("string");
-      count +=1
-      if (count == 1){
-        done()
-      }
+      done()
     }, (err) => {
         done(err)
       });
-    board.setPort("/dev/rfcomm0").then((status) => {
-      board.measureEnv()
-    })
+   board.findPort().then( (response)=>{  
+    //SerialPort.on("dataToDevice", function(data) {
+    //  let string_response = "{\"value\" :"+"89.7"+",\"error\":"+"null"+"}"
+    //  SerialPort.writeToComputer(string_response);
+    //})
+    console.log("REQUEST MEAS")
+    board.measureSoil()}
+    ).catch((err)=> done(err))
   })
 
-  it('return am error for wrong port ', function(done) {
-    var board : BoardI = new Board((value, type) => {
+  it("return am error for wrong port ", function(done) {
+    const board : BoardI = new Board(SerialPort, ( value, type) => {
       done()
     }, (err) => {
         done(err)

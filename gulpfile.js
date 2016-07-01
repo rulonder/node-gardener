@@ -11,6 +11,7 @@ gulp.task('test', ['build'],function (cb) {
         // gulp-mocha needs filepaths so you can't have any plugins before it
         .pipe(mocha({reporter: 'spec'}))
         .once('error', function () {
+            console.log("Error in mocha")
             process.exit(1)
         })
         .once('end', function () {

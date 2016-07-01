@@ -1,0 +1,22 @@
+{
+  "name": "node-gardener",
+  "globalDependencies": {
+    "bluebird": "github:DefinitelyTyped/DefinitelyTyped/bluebird/bluebird.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "body-parser": "github:DefinitelyTyped/DefinitelyTyped/body-parser/body-parser.d.ts#e95958ac847d9a343bdc8d7cbc796a5f6da29f71",
+    "chai": "github:DefinitelyTyped/DefinitelyTyped/chai/chai.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "jsonwebtoken": "github:DefinitelyTyped/DefinitelyTyped/jsonwebtoken/jsonwebtoken.d.ts#fa8d9683f37d07ed79617a6e037916c6718aeb11",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#e95958ac847d9a343bdc8d7cbc796a5f6da29f71",
+    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "mocha": "github:DefinitelyTyped/DefinitelyTyped/mocha/mocha.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#fa8d9683f37d07ed79617a6e037916c6718aeb11",
+    "sequelize": "github:DefinitelyTyped/DefinitelyTyped/sequelize/sequelize.d.ts#e95958ac847d9a343bdc8d7cbc796a5f6da29f71",
+    "serialport": "registry:dt/serialport#0.0.0+20160627065358",
+    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "superagent": "github:DefinitelyTyped/DefinitelyTyped/superagent/superagent.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116",
+    "supertest": "github:DefinitelyTyped/DefinitelyTyped/supertest/supertest.d.ts#a1226afe5c4ab96610e088d970eb4f8537b1d116"
+  },
+  "dependencies": {
+    "tape": "registry:npm/tape#4.0.0+20160622192935"
+  }
+}

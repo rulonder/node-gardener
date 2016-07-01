@@ -11,6 +11,7 @@
         "src/**/*.ts"
     ],
     "files": [
+        "typings/index.d.ts",
         "src/board.ts",
         "src/database.ts",
         "src/gardener.ts",

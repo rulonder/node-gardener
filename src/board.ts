@@ -1,7 +1,8 @@
-/// <reference path="../typings/tsd.d.ts" />
-var SerialPort = require("serialport")
-var _ = require("lodash")
+/// <reference path="../typings/index.d.ts" />
+import * as _ from "lodash"
 import * as Promise from "bluebird"
+
+let REG_has_usb : RegExp = /(usb|USB)/
 
 export interface BoardI {
   measureSoil: Function
@@ -10,26 +11,17 @@ export interface BoardI {
   setPort: Function
   getPort: Function
   measureEnv: Function
-}
-
-var options = {
-  baudrate: 9600,
-  parser: SerialPort.parsers.readline("\n")
+  serialPort : any
+  findPort : Function
 }
 
 export class Board implements BoardI {
-  private serialPort: any
+  public serialPort: any
   private port: string
-  private dataHandler: Function
-  private errHandlerFunc: Function
   private isValveOpen: boolean
 
-  constructor(dataHandler, errHandler) {
-    this.dataHandler = dataHandler
-    this.errHandlerFunc = errHandler
+  constructor (public serialHandler ,private dataHandler: Function,private errHandlerFunc: Function) {
     this.port = null
-    this.findPort()
-
   }
 
   errHandler (err) {
@@ -44,8 +36,12 @@ export class Board implements BoardI {
     this.port = port
     return new Promise<Object>((res, rej) => {
       try {
-        this.serialPort = new SerialPort.SerialPort(this.port, options,false)
-        this.serialPort.open((error) => {
+        var options = {
+          baudrate: 9600,
+          parser: this.serialHandler.parsers.readline("\n")
+        }        
+        this.serialPort = new this.serialHandler.SerialPort(port, options,false)
+        this.serialPort.open( (error) => {
           if (error) {
             rej({ error: "Invalid Port" })
           } else {
@@ -59,7 +55,8 @@ export class Board implements BoardI {
           }
         })
       } catch (err) {
-        rej({ error: "Invalid Port" })
+        console.log(err)
+        rej({ error: "Error configuring Port" })
       }
     })
 
@@ -69,16 +66,16 @@ export class Board implements BoardI {
     return this.port
   }
   // find the first available port with usb in the pnpId
-  findPort() {
-    getPorts()
+  findPort () {
+    return getPorts(this.serialHandler)
       .then((data) => {
-      for (let port in data) {
-        if (_.includes('USB', port.pnpId)) {
-          return this.setPort(port.comName)
+      for (let port_data in data) {
+        if ( data[port_data].comName.match(REG_has_usb)) {
+          return this.setPort(data[port_data].comName)
         }
       }
-    })
-      .catch((err) => {
+      throw "No valid port";
+    }).catch((err) => {
       this.port = null
     })
   }
@@ -126,11 +123,11 @@ export class Board implements BoardI {
   }
 }
 
-export function getPorts() {
+export function getPorts( serialHandler ) {
   return new Promise<[Object]>((res, rej) => {
-    SerialPort.list((err, ports) => {
-      if (err) rej("No ports available")
-      else res(ports)
+    serialHandler.list((err, ports) => {
+      if (err) {rej("No ports available")
+    } else {res(ports)}
     })
   })
 }

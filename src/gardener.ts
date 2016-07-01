@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 import * as db from "./database"
 import {Board, BoardI, getPorts} from "./board"
 
@@ -16,10 +16,11 @@ export class Gardener implements GardenerInt {
   private board: BoardI
   private schedule: NodeJS.Timer
 
-  constructor(db) {
+  constructor(db,serialHandler) {
     this.db = db
-    this.board = new Board((v,t)=>{this.addRecord(v,t)}, (err) => { console.log(err) })
-  }
+    this.board = new Board(serialHandler,(v,t)=>{this.addRecord(v,t)}, (err) => { console.log(err) })
+    this.board.findPort()  
+}
   getState(type: string) {
     return this.db.getRecord(type, 500)
   }
@@ -38,7 +39,7 @@ export class Gardener implements GardenerInt {
     return {status:"closed"}
   }
 
-  listPorts() { return getPorts() }
+  listPorts(serialHandler) { return getPorts(serialHandler) }
 
   getPort() { return this.board.getPort() }
 

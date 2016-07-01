@@ -1,11 +1,9 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 import * as Promise from "bluebird"
 
-var sqlite3 = require('sqlite3').verbose()
+const sqlite3 = require('sqlite3').verbose()
 
-var db = new sqlite3.Database('./database.sqlite')
-
-
+const db = new sqlite3.Database('./database.sqlite')
 
 
 export interface DatabaseI {
@@ -19,7 +17,7 @@ export class Database implements DatabaseI {
   // Contructor
   constructor(database: string) {
     this.database = database
-    db.serialize(()=> {
+    db.serialize(() => {
       db.run("CREATE TABLE if not exists " + this.database +
              '(id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
              'type TEXT, ' +
@@ -34,7 +32,7 @@ export class Database implements DatabaseI {
 
   addRecord(value: number, type: string) {
     return new Promise((resolve,reject)=>{
-      var sqlRequest = "INSERT INTO "+this.database+" (type, value) " +
+      const sqlRequest = "INSERT INTO "+this.database+" (type, value) " +
                "VALUES('" + type + "', '" + value + "')"
       db.run(sqlRequest, function(err) {
         if(err !== null) {

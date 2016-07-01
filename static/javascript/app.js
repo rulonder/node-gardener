@@ -1,18 +1,22 @@
 var request = require('superagent')
 
 console.log("test")
-var server = "http://192.168.1.104:8080"
-var user = "user"
-var pass = "1234"
+
 var token = ""
 
+function login() {
+  // get login parameters
+  var user_name = document.getElementById("user").value
+  var password = document.getElementById("password").value
 request
   .post('/users/login')
   .send({
-    username: user,
-    password: pass
+    username: user_name,
+    password: password
   })
   .end(function(err, res) {
+    if (err ) console.log(err)
+    show_all()
     token = res.body.token
     request
       .get('/api//measurements/humidity')
@@ -43,6 +47,39 @@ request
           generateplot(dataset, "#chart3")
         })
   })
+
+}
+
+function logout(){
+    to_be_hidden_nodes = document.querySelectorAll('.logged_in')
+    to_be_hidden_nodes.forEach(function(element) {
+      if (!element.classList.contains("hide")) {
+        element.classList.add('hide')
+      }
+    })
+    to_be_shown_nodes = document.querySelectorAll('.logged_out')
+    to_be_shown_nodes.forEach(function(element) {
+      if (element.classList.contains("hide")) {
+        element.classList.remove('hide')
+      }
+    })    
+}
+
+function show_all(){
+    to_be_shown_nodes = document.querySelectorAll('.logged_in')
+    to_be_shown_nodes.forEach(function(element) {
+      if (element.classList.contains("hide")) {
+        element.classList.remove('hide')
+      }
+    })
+    to_be_hidden_nodes = document.querySelectorAll('.logged_out')
+    to_be_hidden_nodes.forEach(function(element) {
+      if (!element.classList.contains("hide")) {
+        element.classList.add('hide')
+      }
+    })    
+}
+
 
 function generateplot(data, id) {
   //Create SVG element
@@ -118,3 +155,14 @@ function closeValve() {
       console.log(results)
     })
 }
+
+// assign on click events to buttons
+
+login_button = document.getElementById("login")
+login_button.addEventListener('click', login ) 
+openValve_button = document.getElementById("openValve")
+openValve_button.addEventListener('click', openValve ) 
+closeValve_button = document.getElementById("closeValve")
+closeValve_button.addEventListener('click', closeValve ) 
+// hide elements
+logout()

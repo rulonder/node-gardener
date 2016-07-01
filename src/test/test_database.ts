@@ -1,39 +1,39 @@
-/// <reference path="../../typings/tsd.d.ts" />
-'use strict';
+/// <reference path="../../typings/index.d.ts" />
+"use strict";
 import * as Promise from "bluebird"
-// set env variables
-var user = "user"
-var pass = "12345mypaswword"
+// set env constiables
+const user = "user"
+const pass = "12345mypaswword"
 
 process.env.GAR_USERNAME = user
 process.env.GAR_PASSWORD = pass
 
 // import the moongoose helper utilities
-var should = require('chai').should()
+const should = require("chai").should()
 import * as db from "../database"
 
 
-describe('Database Handler', function () {
-  var database = new db.Database("measurement_test")
-  var j  = 0
+describe("Database Handler", function () {
+  const database = new db.Database("measurement_test")
+  const j  = 0
   // get authentication token
   before(function(done){
-    var values = []
+    const values = []
     for (let i = 0; i < 10; i++) {
         values.push(i)
     }
-    var insertions = values.map((data)=>{return database.addRecord(data,'humidity')})
+    const insertions = values.map((data)=>{return database.addRecord(data,"humidity")})
     Promise.all(insertions).then(
-      (results)=>{
+      (results) => {
         done()
     }
   )
   })
  //... previous te
- it('should return an array of values', function (done) {
+ it("should return an array of values", function (done) {
    database.getRecord("humidity",100).then(
-     (data:any) => {
-       var records = data.values
+     (data : any) => {
+       const records = data.values
        records.should.be.an("array")
        records[0].should.have.property("value")
        records[0].should.have.property("created")

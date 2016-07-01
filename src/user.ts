@@ -1,30 +1,27 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 /** http://stackoverflow.com/a/14015883/1015046 **/
-import * as crypto from 'crypto'
 import * as Promise from "bluebird"
-import * as jwt from 'jsonwebtoken'
+import * as jwt from "jsonwebtoken"
 
-var shasum = crypto.createHash('sha256')
-
-var SECRET= process.env.GAR_SECRET || "ThisIsAJokegdlufiwswqusoiqwu8ed7wq98"
-var USER = process.env.GAR_USERNAME || "user"
-var PASSWORD = process.env.GAR_PASSWORD || "1234"
+const SECRET = process.env.GAR_SECRET || "ThisIsAJokegdlufiwswqusoiqwu8ed7wq98"
+const USER = process.env.GAR_USERNAME || "user"
+const PASSWORD = process.env.GAR_PASSWORD || "1234"
 
 class UserHandler {
     constructor () {}
 
     login (username : string , password : string) {
-      return new Promise((resolve,reject)=>{
-        if (this.isValidUser(username,password)) {
-          var user = {
+      return new Promise((resolve, reject) => {
+        if (this.isValidUser(username, password)) {
+          const user = {
             "name" : username
           }
-          var token = jwt.sign(user, SECRET, {
-            expiresInMinutes: 1440 // expires in 24 hours
+          const token = jwt.sign(user, SECRET, {
+            expiresIn : 86400 // expires in 24 hours
           });
-          resolve({ token:token})
+          resolve({ token: token})
         } else {
-          reject({error:"invalid credentials"})
+          reject({ success: false , error: "invalid credentials"})
         }
       })
     }
@@ -33,8 +30,8 @@ class UserHandler {
       return (user===USER && pass==PASSWORD)
     }
 
-    validateUserMW(req,res,next) {
-      var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    validateUserMW(req, res, next) {
+      const token = req.body.token || req.query.token || req.headers["x-access-token"];
       // validate token
       // decode token
       if (token) {
@@ -42,7 +39,7 @@ class UserHandler {
         // verifies secret and checks exp
         jwt.verify(token, SECRET, function(err, decoded) {
           if (err) {
-            return res.status(401).json({ success: false, message: 'Failed to authenticate' });
+            return res.status(401).json({ message: "Failed to authenticate", success: false });
           } else {
             // if everything is good, save to request for use in other routes
             req.decoded = decoded;
@@ -53,11 +50,11 @@ class UserHandler {
       } else {
             // if there is no token
         // return an error
-        return res.status(401).json({ success: false, message: 'Failed to authenticate' })
+        return res.status(401).json({ message: "Failed to authenticate", success: false  })
       }
 
     }
 }
 
-var user = new UserHandler()
+const user = new UserHandler()
 export default user
