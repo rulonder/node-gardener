@@ -33,4 +33,5 @@ const serialport: SerialPortI ={
     }
 }
 
+
 export default serialport

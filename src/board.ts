@@ -15,6 +15,10 @@ export interface BoardI {
   findPort : Function
 }
 
+export interface PortI {
+  comName : String
+}
+
 export class Board implements BoardI {
   public serialPort: any
   private port: string
@@ -126,7 +130,7 @@ export class Board implements BoardI {
 }
 
 export function getPorts( serialHandler ) {
-  return new Promise<[Object]>((res, rej) => {
+  return new Promise<[PortI]>((res, rej) => {
     serialHandler.list((err, ports) => {
       if (err) {rej("No ports available")
     } else {res(ports)}
