@@ -22,7 +22,7 @@ export class Gardener implements GardenerInt {
                             (v,t)=>{this.addRecord(v,t)}, 
                             (err) => { console.log(err) })
     this.board.findPort().then((port_name)=>{
-      this.setPort(port_name)
+      return this.setPort(port_name)
     }).catch(err=>{
       console.log(err)
     })  

@@ -3,6 +3,7 @@
 import * as Promise from "bluebird"
 import * as test from "tape"
 import * as moment from "moment"
+import * as _ from "lodash"
 // set env constiables
 const user = "user"
 const pass = "12345mypaswword"
@@ -45,9 +46,9 @@ test("before", function (t) {
        expected = true
        actual = Array.isArray(records)
        assert.equal(actual,expected)       
-       // check value
-       actual = records[0]["value"]
-       expected = 0
+       // check value has same date as first one
+       actual = _.find(records,{"value":0})["created"]
+       expected = records[0]["created"]
        assert.equal(actual,expected,"first value")
        actual = moment.utc(records[0]["created"]) >= start_date
        expected = true          

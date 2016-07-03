@@ -4,12 +4,14 @@
   "description": "",
   "main": "./deploy/index.js",
   "scripts": {
-    "test": "npm run build_server && ./node_modules/.bin/tape deploy/test/test_*.js | ./node_modules/.bin/faucet ",
+    "test": "npm run build_server && tape deploy/test/test_*.js | faucet ",
     "start": "node --harmony deploy/index.js",
     "postinstall": "npm run install_tsd",
-    "build_server": "./node_modules/.bin/tsc",
-    "bundle_client": "./node_modules/.bin/browserify static/javascript/app.js -o deploy/static/javascript/bundle.js",
-    "install_tsd": "./node_modules/.bin/typings install"
+    "build":"npm run build_server && npm run deploy_client",
+    "build_server": "tsc",
+    "deploy_client":"npm run build_client && cp -rf static deploy",
+    "build_client": "browserify static/javascript/app.js -o static/javascript/bundle.js",
+    "install_tsd": "typings install"
   },
   "author": "",
   "license": "ISC",
