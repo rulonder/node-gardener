@@ -27,6 +27,7 @@ test("before", function (t) {
     start_date = moment()
     // remove miliseconds
     start_date.milliseconds(0)
+    // load database
     const insertions = values.map((data)=>{return database.addRecord(data,"humidity")})
     Promise.all(insertions).then(
       (results) => {
@@ -45,9 +46,9 @@ test("before", function (t) {
        actual = Array.isArray(records)
        assert.equal(actual,expected)       
        // check value
-       actual = actual = records[0]["value"]
+       actual = records[0]["value"]
        expected = 0
-       assert.equal(actual,expected)
+       assert.equal(actual,expected,"first value")
        actual = moment.utc(records[0]["created"]) >= start_date
        expected = true          
        assert.equal(actual,expected)

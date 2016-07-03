@@ -3,7 +3,6 @@
 // set env variables
 const user = "user"
 const pass = "12345passwordfortest"
-
 process.env.GAR_USERNAME = user
 process.env.GAR_PASSWORD = pass
 process.env.NODE_ENV = "development"

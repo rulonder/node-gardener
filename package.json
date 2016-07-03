@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^3.5.0",
     "faucet": "0.0.1",
     "gulp": "^3.9.0",
     "gulp-coverage": "^0.3.38",
@@ -23,18 +22,15 @@
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^2.13.6",
     "istanbul": "^0.4.4",
-    "should": ">= 9.0.2",
     "supertest": "1.2.x",
     "tslint": "^3.12.1"
   },
   "dependencies": {
-    "blue-tape": "^0.2.0",
     "bluebird": "^2.9.34",
     "body-parser": "^1.13.3",
     "browserify": "^13.0.1",
     "express": "^4.13.3",
     "jsonwebtoken": "^7.0.1",
-    "knex": "^0.11.7",
     "lodash": "^3.10.1",
     "moment": "^2.13.0",
     "proxyquire": "^1.7.10",
