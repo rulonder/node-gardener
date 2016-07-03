@@ -3,21 +3,6 @@ var ts = require('gulp-typescript')
 var sourcemaps = require('gulp-sourcemaps')
 var tsProject = ts.createProject('tsconfig.json')
 var tslint = require('gulp-tslint')
-var mocha = require('gulp-mocha')
-
-
-gulp.task('test', ['build'],function (cb) {
-    gulp.src('deploy/test/*.js', {read: false})
-        // gulp-mocha needs filepaths so you can't have any plugins before it
-        .pipe(mocha({reporter: 'spec'}))
-        .once('error', function () {
-            console.log("Error in mocha")
-            process.exit(1)
-        })
-        .once('end', function () {
-            process.exit()
-        })
-})
 
 gulp.task('tslint', function(){
       return gulp.src(['src/**/*.ts','!ts/typings/**/*.ts'] )
@@ -39,7 +24,7 @@ gulp.task('static', function(){
     .pipe(gulp.dest('deploy/static'))
 })
 
-gulp.task('default',['static','build','test'],function cb(cd) {
+gulp.task('default',['static','build'],function cb(cd) {
   process.exit()
   // body...
 })

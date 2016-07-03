@@ -5,16 +5,7 @@ import * as garden from "./gardener"
 //import * as Gardener   from "gardener";
 import * as db from "./database"
 import * as Serialport from "serialport"
-if (process.env.NODE_ENV == 'development') {
-let SerialPort = require('virtual-serialport')
-// mock SerialPort list function
-SerialPort.list = (cb) => {
-  const fake_ports = [ { comName: '/dev/cu.Bluetooth-Incoming-Port'},
-  { comName: '/dev/cu.wchusbserial12240' } ]
-   cb(null, fake_ports)
 
-}
-}
 const database = new db.Database("measurements")
 
 const gardener = new garden.Gardener(database, Serialport)

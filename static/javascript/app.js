@@ -38,7 +38,7 @@ request
         generateplot(dataset, "#chart2")
       })
       request
-        .get('/api//measurements/soil_humidity')
+        .get('/api//measurements/soil')
         .set('x-access-token', token)
         .end(function(err, res) {
           var results = res.body

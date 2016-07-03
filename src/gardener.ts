@@ -18,8 +18,14 @@ export class Gardener implements GardenerInt {
 
   constructor(db,serialHandler) {
     this.db = db
-    this.board = new Board(serialHandler,(v,t)=>{this.addRecord(v,t)}, (err) => { console.log(err) })
-    this.board.findPort()  
+    this.board = new Board( serialHandler,
+                            (v,t)=>{this.addRecord(v,t)}, 
+                            (err) => { console.log(err) })
+    this.board.findPort().then((port_name)=>{
+      this.setPort(port_name)
+    }).catch(err=>{
+      console.log(err)
+    })  
 }
   getState(type: string) {
     return this.db.getRecord(type, 500)
@@ -45,6 +51,8 @@ export class Gardener implements GardenerInt {
 
   setPort(port: string) {
     return this.board.setPort(port).then((result) => {
+      this.board.measureEnv()
+      this.board.measureSoil()
       // Setup the timeout handler
       this.schedule = setInterval(() => {
         // Clear the local timer variable, indicating the timeout has been triggered.

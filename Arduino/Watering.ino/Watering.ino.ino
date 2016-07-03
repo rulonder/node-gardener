@@ -69,13 +69,13 @@ void processInput(char Input) {
     break;
   case 'p':
     pump()  ;
-    returnValue("\"Done\"",false);
+    returnValue(1,false,"pump");
     break;
   case 'r':
-    returnValue(getSensorReading(),false);
+    returnValue(getSensorReading(),false,"soil");
     break;
   default:
-    returnValue("\"unknownCommand\"",true);
+    returnValue(0,true,"error");
     break;
   }
 }
@@ -127,7 +127,7 @@ void readEnv()
 
 
 // read soil sensor
-String getSensorReading(){
+float getSensorReading(){
   // switch oin sensor
     digitalWrite(sensorPin, HIGH);
     delay(300);
@@ -142,16 +142,19 @@ String getSensorReading(){
      String g= (String)dtostrf( avegValue, 7, 3,holder);
      // switch off sensor
      digitalWrite(sensorPin,LOW);
-     return g;
+     return avegValue;
 }
 
-void returnValue(String value, boolean error){
-  String Error = "null";
+void returnValue(float value, boolean error, String type){
+  char buffer[256];
+  root["error"] = NULL;
   if (error) {
-    Error = "1";
-  };
-  String g= "{\"value\" :"+value+",\"error\":"+Error+"}";
-  Serial.println(g);
+    root["error"] = 1;
+  };  
+  root["value"] = value;
+  root["type"] = type;
+  root.printTo(buffer, sizeof(buffer));
+  Serial.println(buffer); 
 }
 
 void pump() {

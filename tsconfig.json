@@ -10,7 +10,11 @@
     "filesGlob": [
         "src/**/*.ts"
     ],
-    "files": [
+    "exclude":[
+        "node_modules",        
+        "typings"
+    ]
+/*    ,"files": [
         "typings/index.d.ts",
         "src/board.ts",
         "src/database.ts",
@@ -23,5 +27,5 @@
         "src/test/test_gardener.ts",
         "src/user.ts",
         "src/userRouter.ts"
-    ]
+    ]*/
 }

@@ -1,37 +1,36 @@
 /// <reference path="../../typings/index.d.ts" />
-"use strict";
-// import the moongoose helper utilities
-const should = require("chai").should()
+import * as test_blue from "blue-tape"
+import * as test from "tape"
 import {Board, BoardI} from "../board"
-let SerialPort2 = require('virtual-serialport')
-let SerialPort = require('serialport')
-// mock SerialPort list function
-SerialPort2.list = (cb) => {
-  const fake_ports = [ { comName: '/dev/cu.Bluetooth-Incoming-Port',
-    manufacturer: undefined,
-    serialNumber: undefined,
-    pnpId: undefined,
-    locationId: undefined,
-    vendorId: undefined,
-    productId: undefined },
-  { comName: '/dev/cu.wchusbserial12240',
-    manufacturer: undefined,
-    serialNumber: undefined,
-    pnpId: undefined,
-    locationId: '0x12240000',
-    vendorId: '0x1a26',
-    productId: '0x7223' } ]
-   cb(null, fake_ports)
+import SerialPort from "./mock_serial"
+// let SerialPort = require('serialport')
 
-}
-
-SerialPort2.parsers={
-  raw :()=>{}
-  , readline : ()=>{}
-}
+test("Board returns a value after resquest",(t)=>{
+    t.plan(1)
+    const board : BoardI = new Board(SerialPort,
+    (  value, type) => {
+      const actual = value
+      const expected = 89.7
+      t.equal(actual,expected)
+      t.end()
+    }, (err) => {
+        t.end()
+      });
+   board.findPort()
+   .then((port)=>{
+     return board.setPort(port)
+   })
+   .then( (response)=>{  
+    board.serialPort.on("dataToDevice", function(data) {
+      let string_response = "{\"value\" :"+"89.7"+",\"error\":"+"null"+"}"
+      board.serialPort.writeToComputer(string_response);
+    })
+    board.measureSoil()}
+    )
+})
 
 // Actual testing
-describe("Board (only if avalible in port, HW in the loop)", () => {
+/*describe("Board (only if avalible in port, HW in the loop)", () => {
   it("return a value and a type when asked for read ", function(done) {
     const board : BoardI = new Board(SerialPort,
     (  value, type) => {
@@ -68,3 +67,4 @@ describe("Board (only if avalible in port, HW in the loop)", () => {
   })
 
 })
+*/

@@ -24,7 +24,7 @@ export class Board implements BoardI {
     this.port = null
   }
 
-  errHandler (err) {
+  reconnect (err) {
    // try reconnect to Port
    this.setPort(this.getPort()).catch(err =>{
      this.errHandlerFunc(err)
@@ -49,7 +49,7 @@ export class Board implements BoardI {
               this.dataParse(data)
             })
             this.serialPort.on('error', (err) => {
-              this.errHandler(err)
+              this.reconnect(err)
             })
             res({ success: true })
           }
@@ -71,7 +71,7 @@ export class Board implements BoardI {
       .then((data) => {
       for (let port_data in data) {
         if ( data[port_data].comName.match(REG_has_usb)) {
-          return this.setPort(data[port_data].comName)
+          return data[port_data].comName
         }
       }
       throw "No valid port";
@@ -83,19 +83,19 @@ export class Board implements BoardI {
   dataParse(data) {
     try {
       var data = JSON.parse(data)
-      if (data.error != 0) throw "invalid record"
+      if (data.error ) throw "invalid record"
       var value: number = data.value
       var type: string = data.type
       this.dataHandler(value, type)
     } catch (err) {
-      this.errHandler(err)
+      this.errHandlerFunc(err)
     }
   }
   // measure soil humidity
   measureSoil() {
     this.serialPort.write("r", (err, results) => {
       if (err) {
-        this.errHandler(err)
+        this.errHandlerFunc(err)
       }
     })
   }
@@ -103,22 +103,24 @@ export class Board implements BoardI {
   measureEnv() {
     this.serialPort.write("e", (err, results) => {
       if (err) {
-        this.errHandler(err)
+        this.errHandlerFunc(err)
       }
     })
   }
   // open valve
   openValve() {
     this.serialPort.write("o", (err, results) => {
-      console.log('err ' + err);
-      console.log('results ' + results);
+      if (err) {
+        this.errHandlerFunc(err)
+      }
     })
   }
   // close valve
   closeValve() {
     this.serialPort.write("c", (err, results) => {
-      console.log('err ' + err);
-      console.log('results ' + results);
+      if (err) {
+        this.errHandlerFunc(err)
+      }
     })
   }
 }
