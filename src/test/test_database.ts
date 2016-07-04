@@ -26,15 +26,13 @@ test("before", function (t) {
         values.push(i)
     }
     start_date = moment()
-    // remove miliseconds
-    start_date.milliseconds(0)
+    // remove 1 second to avoid round error with DB date comparison
+    start_date.subtract({ seconds: 1});
     // load database
     const insertions = values.map((data)=>{return database.addRecord(data,"humidity")})
-    Promise.all(insertions).then(
+    Promise.each(insertions,
       (results) => {
-        t.end()
-    }
-  )
+    }).then(()=>{t.end()})
 })
  //... previous te
  test("should return an array of values", function (assert) {
