@@ -3,7 +3,7 @@ import * as db from "./database"
 import {Board, BoardI, getPorts} from "./board"
 
 // interface for gardener
-interface GardenerInt {
+interface GardenerI {
   getState(type: string): Object,
   addRecord(value: number, type: string): Object,
   getPort(): Promise<Object>,
@@ -11,7 +11,7 @@ interface GardenerInt {
   closeValve(): Object,
 }
 
-export class Gardener implements GardenerInt {
+export class Gardener implements GardenerI {
   private db: db.DatabaseI
   private board: BoardI
   private schedule: NodeJS.Timer

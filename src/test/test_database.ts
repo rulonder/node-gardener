@@ -4,6 +4,8 @@ import * as Promise from "bluebird"
 import * as test from "tape"
 import * as moment from "moment"
 import * as _ from "lodash"
+const sqlite3 = require('sqlite3').verbose()
+const memory_db = new sqlite3.Database(':memory:')
 // set env constiables
 const user = "user"
 const pass = "12345mypaswword"
@@ -17,7 +19,8 @@ import * as db from "../database"
 let database
 let start_date
 test("before", function (t) {
-  database = new db.Database("measurement_test")
+  database = new db.Database("measurement_test",memory_db)
+  database.createTable().then(()=>{
   const j  = 0
   // get authentication token
 
@@ -33,6 +36,7 @@ test("before", function (t) {
     Promise.each(insertions,
       (results) => {
     }).then(()=>{t.end()})
+  })
 })
  //... previous te
  test("should return an array of values", function (assert) {
