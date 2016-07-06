@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <ArduinoJson.h>
 #include <idDHT11.h>
-
+#include <Servo.h>
 /* Use a variable called byteRead to temporarily store
    the data coming from the computer */
 int byteRead;
+Servo myservo;
 // configure dht11 sensor
 int idDHT11pin = 2; //Digital pin for comunications
 int idDHT11intNumber = 0; //interrupt number (must be the one that use the previus defined pin
@@ -24,6 +25,8 @@ int sensorPin = 3;
 int readVal = 0;
 
 // valve pin
+int valvepin = 5;
+//pump pin 
 int pumpPin = 4;
 
 float avegValue = 0.0;
@@ -40,6 +43,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(pumpPin,OUTPUT);
   pinMode(sensorPin,OUTPUT);
+  myservo.attach(valvepin);
 }
 
 void loop() {
@@ -64,6 +68,14 @@ void processInput(char Input) {
 
   // do something different depending on the
   switch (Input) {
+   case 'o':
+    openValve();
+    returnValue(1,false,"valve"); 
+    break;
+   case 'c':
+    closeValve();
+    returnValue(0,false,"valve");
+    break;      
   case 'e':
     readEnv();
     break;
@@ -162,3 +174,14 @@ void pump() {
   delay(2000);
   digitalWrite(pumpPin,LOW);
 }
+
+void openValve() {
+    myservo.write(180);
+}
+
+void closeValve() {
+    myservo.write(0);
+}
+
+
+

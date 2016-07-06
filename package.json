@@ -5,7 +5,7 @@
   "main": "./deploy/index.js",
   "scripts": {
     "test": "npm run build_server && tape deploy/test/test_*.js | faucet ",
-    "start": "node --harmony deploy/index.js",
+    "start": "node deploy/index.js",
     "postinstall": "npm run install_tsd",
     "build":"npm run build_server && npm run deploy_client",
     "build_server": "tsc",

@@ -2,7 +2,48 @@ var request = require('superagent')
 
 console.log("test")
 
-var token = ""
+var token = localStorage.getItem("token")||""
+
+function getvalues(){
+      show_all()
+    request
+      .get('/api//measurements/humidity')
+      .set('x-access-token', token)
+      .end(function(err, res) {
+        var results = res.body
+        var dataset = results.values;
+        //Create SVG element
+        generateplot(dataset, "#chart")
+      })
+    request
+      .get('/api//measurements/temperature')
+      .set('x-access-token', token)
+      .end(function(err, res) {
+        var results = res.body
+        var dataset = results.values;
+        generateplot(dataset, "#chart2")
+      })
+      request
+        .get('/api//measurements/soil')
+        .set('x-access-token', token)
+        .end(function(err, res) {
+          var results = res.body
+
+          var dataset = results.values;
+          generateplot(dataset, "#chart3")
+        })
+      // get list of ports  
+      request
+        .get('/api/ports')
+        .set('x-access-token', token)
+        .end(function(err, res) {
+          var results = res.body
+          console.log(results)
+          var ports = results.ports;
+          listports(ports, "#portslist")
+        })
+
+}
 
 function login() {
   // get login parameters
@@ -15,42 +56,57 @@ request
     password: password
   })
   .end(function(err, res) {
-    if (err ) console.log(err)
-    show_all()
+    if (err ) {
+      console.log(err)
+      logout()
+    }
+
     token = res.body.token
-    request
-      .get('/api//measurements/humidity')
-      .set('x-access-token', token)
-      .end(function(err, res) {
-        var results = res.body
-        console.log(results)
-        var dataset = results.values;
-        //Create SVG element
-        generateplot(dataset, "#chart")
-      })
-    request
-      .get('/api//measurements/temperature')
-      .set('x-access-token', token)
-      .end(function(err, res) {
-        var results = res.body
-        console.log(results)
-        var dataset = results.values;
-        generateplot(dataset, "#chart2")
-      })
-      request
-        .get('/api//measurements/soil')
-        .set('x-access-token', token)
-        .end(function(err, res) {
-          var results = res.body
-          console.log(results)
-          var dataset = results.values;
-          generateplot(dataset, "#chart3")
-        })
+    localStorage.setItem("token",token)
+    getvalues()
+
   })
 
 }
 
+function createListRecord (text){
+  var li = document.createElement("li")
+  li.className="mdl-list__item"
+  var span = document.createElement("span")
+  span.className="mdl-list__item-primary-content"
+  span.textContent = text
+  li.appendChild(span)
+  return li
+}
+
+function listports(ports, id){
+  var target = document.querySelector(id)
+  while(target.lastChild){
+    target.removeChild(target.lastChild)
+  } 
+  ports.forEach((port)=>{
+    console.log(port.comName)
+  var child = createListRecord(port.comName)
+  target.appendChild(child)
+  child.onclick=(ev)=>{setPort(ev)}
+})
+
+}
+
+function setPort(ev){
+  target_port = ev.toElement.innerHTML
+  console.log(target_port)
+      request  
+      .post("/api/ports/main")
+      .set("x-access-token", token)
+      .send({port:target_port})
+        .end(function(err, res) {
+          var results = res.body
+        })
+}
+
 function logout(){
+   localStorage.removeItem("token")
     to_be_hidden_nodes = document.querySelectorAll('.logged_in')
     to_be_hidden_nodes.forEach(function(element) {
       if (!element.classList.contains("hide")) {
@@ -83,12 +139,12 @@ function show_all(){
 
 function generateplot(data, id) {
   //Create SVG element
-  var w = 600;
+  var width = parseInt(d3.select(id).style('width'), 10);
   var h = 400;
   var padding = 40;
   var svg = d3.select(id)
     .append("svg")
-    .attr("width", w)
+    .attr("width", "100%")
     .attr("height", h);
   var yScale = d3.scale.linear()
     .domain([d3.min(data, function(d) {
@@ -103,11 +159,11 @@ function generateplot(data, id) {
     }), d3.max(data, function(d) {
       return new Date(d.created)
     })])
-    .range([padding, w - padding]);
+    .range([padding, width - padding]);
   var xAxis = d3.svg.axis()
     .scale(xScale)
     .orient("bottom")
-    .ticks(2)
+    .ticks(4)
     .tickFormat(d3.time.format('%Y/%m/%d %H'));
   var yAxis = d3.svg.axis()
     .scale(yScale)
@@ -142,7 +198,6 @@ function openValve() {
     .set('x-access-token', token)
     .end(function(err, res) {
       var results = res.body
-      console.log(results)
     })
 }
 
@@ -152,7 +207,6 @@ function closeValve() {
     .set('x-access-token', token)
     .end(function(err, res) {
       var results = res.body
-      console.log(results)
     })
 }
 
@@ -160,9 +214,15 @@ function closeValve() {
 
 login_button = document.getElementById("login")
 login_button.addEventListener('click', login ) 
+login_button = document.getElementById("logout")
+login_button.addEventListener('click', logout ) 
 openValve_button = document.getElementById("openValve")
 openValve_button.addEventListener('click', openValve ) 
 closeValve_button = document.getElementById("closeValve")
 closeValve_button.addEventListener('click', closeValve ) 
 // hide elements
-logout()
+if (!token) {
+  logout()
+} else {
+  getvalues()
+}

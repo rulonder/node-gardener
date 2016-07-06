@@ -7,6 +7,7 @@ import * as db from "./database"
 import * as Serialport from "serialport"
 
 const database = new db.Database("measurements")
+database.createTable().catch((err)=>{console.log(err)})
 
 const gardener = new garden.Gardener(database, Serialport)
 // ROUTES FOR OUR API

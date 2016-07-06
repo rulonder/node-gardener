@@ -16,8 +16,16 @@
       font-family: "Helvetica Neue", Helvetica;
     }
 
+.demo-list-item {
+  width: 300px;
+}
+
+.mdl-card {
+  min-height: 0px
+}
+
     .demo-card-wide.mdl-card {
-      width: 95%;
+      width: 98%;
       margin: 10px;
     }
 
@@ -98,9 +106,20 @@
       <a id="closeValve" class="mdl-button mdl-js-ripple-effect mdl-js-button mdl-button--raised mdl-button--accent logged_in">
           Close Valve
         </a>
+      <a id="logout" class="mdl-button mdl-js-ripple-effect mdl-js-button mdl-button--raised mdl-button--accent logged_in">
+          Logout
+        </a>
     </div>
 
   </div>
+  <div  class="demo-card-wide mdl-card mdl-shadow--2dp logged_in">
+    <div class="mdl-card__title mdl-card--expand">
+      <h4>
+        Ports
+      </h4>
+    </div> 
+   <ul id="portslist" class="demo-list-item mdl-list"></ul>   
+  </div>  
   <div id="chart" class="demo-card-wide mdl-card mdl-shadow--2dp logged_in">
     <div class="mdl-card__title mdl-card--expand">
       <h4>

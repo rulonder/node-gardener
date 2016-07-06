@@ -1,4 +1,4 @@
-![](https://api.travis-ci.org/rulonder/node-gardener.svg?branch=master)
+[![Build Status](https://api.travis-ci.org/rulonder/node-gardener.svg?branch=master)](https://travis-ci.org/rulonder/node-gardener)
 
 Monitorize and warter your plants using a web interface. Based on node.js and arduino.
 
@@ -27,7 +27,7 @@ npm test
 
 In order to load the Arduino code you firs need to install the idDHT11 library.
 
-The just load into your arduino the Watering.ino project.
+Then just load into your arduino the Watering.ino project.
 
 
 
