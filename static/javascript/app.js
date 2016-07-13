@@ -28,7 +28,6 @@ function getvalues(){
         .set('x-access-token', token)
         .end(function(err, res) {
           var results = res.body
-
           var dataset = results.values;
           generateplot(dataset, "#chart3")
         })
@@ -37,7 +36,6 @@ function getvalues(){
         .set('x-access-token', token)
         .end(function(err, res) {
           var results = res.body
-
           var dataset = results.values;
           generateplot(dataset, "#chart4")
         })        
@@ -80,11 +78,16 @@ request
 
 function createListRecord (text){
   var li = document.createElement("li")
-  li.className="mdl-list__item"
-  var span = document.createElement("span")
-  span.className="mdl-list__item-primary-content"
-  span.textContent = text
-  li.appendChild(span)
+  li.className="mdl-menu__item"
+  //var span = document.createElement("span")
+  //span.className="mdl-list__item-primary-content"
+  li.textContent = text
+  //li.appendChild(span)
+  //var icon = document.createElement("i")
+  // <i class="material-icons mdl-list__item-icon">person</i>
+  //icon.className="material-icons mdl-list__item-icon"
+  //icon.textContent = text
+  //li.appendChild(icon)  
   return li
 }
 
