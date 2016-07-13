@@ -201,15 +201,6 @@ function openValve() {
     })
 }
 
-function closeValve() {
-  request
-    .get('/api/valve/close')
-    .set('x-access-token', token)
-    .end(function(err, res) {
-      var results = res.body
-    })
-}
-
 // assign on click events to buttons
 
 login_button = document.getElementById("login")

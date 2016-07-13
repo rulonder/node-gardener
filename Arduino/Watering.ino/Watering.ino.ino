@@ -2,11 +2,18 @@
 #include <stdlib.h>
 #include <ArduinoJson.h>
 #include <idDHT11.h>
-#include <Servo.h>
-/* Use a variable called byteRead to temporarily store
+#include "Timer.h"
+#include <NewPing.h>
+#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on ping sensor.
+#define ECHO_PIN     11  // Arduino pin tied to echo pin on ping sensor.
+#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); 
+unsigned int pingSpeed = 50; // How frequently are we going to send out a ping (in milliseconds). 50ms would be 20 times a second.
+unsigned long pingTimer;     // Holds the next ping time.
+
+/* Use a variable called byteRead to temporarily stopre
    the data coming from the computer */
 int byteRead;
-Servo myservo;
 // configure dht11 sensor
 int idDHT11pin = 2; //Digital pin for comunications
 int idDHT11intNumber = 0; //interrupt number (must be the one that use the previus defined pin
@@ -17,15 +24,14 @@ StaticJsonBuffer<200> jsonBuffer;
 JsonObject& root = jsonBuffer.createObject();
 // Lib instantiate
 idDHT11 DHT11(idDHT11pin,idDHT11intNumber,dht11_wrapper);
-
+// define Timer
+Timer t;
 // analog pins for soil humidity, the sensor pin switch it on
 // so we can avoid it degradationdue to the electrolisis
 int analogPin = 0;
 int sensorPin = 3;
 int readVal = 0;
 
-// valve pin
-int valvepin = 5;
 //pump pin 
 int pumpPin = 4;
 
@@ -43,7 +49,6 @@ void setup() {
   Serial.begin(9600);
   pinMode(pumpPin,OUTPUT);
   pinMode(sensorPin,OUTPUT);
-  myservo.attach(valvepin);
 }
 
 void loop() {
@@ -54,6 +59,14 @@ void loop() {
     /*ECHO the value that was read, back to the serial port. */
     processInput((char)byteRead);
   }
+  t.update();
+  
+}
+
+float readDistance() { 
+  // Don't do anything here!
+  unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
+  return (uS / US_ROUNDTRIP_CM); // Convert ping time to distance and print result (0 = outside set distance range, no ping echo)
 }
 // return an error through the serial
 void printError(const char* ErrorCode){
@@ -67,24 +80,19 @@ void printError(const char* ErrorCode){
 void processInput(char Input) {
 
   // do something different depending on the
-  switch (Input) {
-   case 'o':
-    openValve();
-    returnValue(1,false,"valve"); 
-    break;
-   case 'c':
-    closeValve();
-    returnValue(0,false,"valve");
-    break;      
+  switch (Input) {     
   case 'e':
     readEnv();
     break;
   case 'p':
     pump()  ;
-    returnValue(1,false,"pump");
     break;
   case 'r':
     returnValue(getSensorReading(),false,"soil");
+    returnValue(readDistance(),false,"tank");
+    break;
+  case 't':
+    returnValue(readDistance(),false,"tank");
     break;
   default:
     returnValue(0,true,"error");
@@ -170,18 +178,17 @@ void returnValue(float value, boolean error, String type){
 }
 
 void pump() {
+  returnValue(1,false,"pump");
   digitalWrite(pumpPin, HIGH);
-  delay(2000);
-  digitalWrite(pumpPin,LOW);
+  // stop pump after 1 minute
+  unsigned long duration = 60000  ;
+  int afterEvent = t.after(duration,stopPump);
 }
 
-void openValve() {
-    myservo.write(180);
-}
-
-void closeValve() {
-    myservo.write(0);
-}
+void stopPump() {
+  digitalWrite(pumpPin,LOW); 
+  returnValue(0,false,"pump"); 
+  }
 
 
 

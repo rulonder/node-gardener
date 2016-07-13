@@ -51,6 +51,3 @@ router.get("/valve/open", (req: express.Request,res: express.Response) =>{
   return res.json(gardener.openValve())
 })
 
-router.get("/valve/close", (req: express.Request,res: express.Response) =>{
-  return res.json(gardener.closeValve())
-})

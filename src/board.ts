@@ -113,15 +113,7 @@ export class Board implements BoardI {
   }
   // open valve
   openValve() {
-    this.serialPort.write("o", (err, results) => {
-      if (err) {
-        this.errHandlerFunc(err)
-      }
-    })
-  }
-  // close valve
-  closeValve() {
-    this.serialPort.write("c", (err, results) => {
+    this.serialPort.write("p", (err, results) => {
       if (err) {
         this.errHandlerFunc(err)
       }
