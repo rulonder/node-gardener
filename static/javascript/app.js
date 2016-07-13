@@ -218,8 +218,6 @@ login_button = document.getElementById("logout")
 login_button.addEventListener('click', logout ) 
 openValve_button = document.getElementById("openValve")
 openValve_button.addEventListener('click', openValve ) 
-closeValve_button = document.getElementById("closeValve")
-closeValve_button.addEventListener('click', closeValve ) 
 // hide elements
 if (!token) {
   logout()
