@@ -3,3 +3,4 @@ node_modules
 deploy
 typings/**
 database.sqlite
+static/javascript/bundle.js
