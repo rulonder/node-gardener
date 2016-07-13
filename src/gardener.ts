@@ -8,7 +8,6 @@ interface GardenerI {
   addRecord(value: number, type: string): Object,
   getPort(): Promise<Object>,
   openValve(): Object,
-  closeValve(): Object,
 }
 
 export class Gardener implements GardenerI {
