@@ -94,29 +94,25 @@ export class Board implements BoardI {
       this.errHandlerFunc(err)
     }
   }
-  // measure soil humidity
-  measureSoil() {
-    this.serialPort.write("r", (err, results) => {
+  sendMessage(message:string){
+    this.serialPort.write(message, (err, results) => {
       if (err) {
         this.errHandlerFunc(err)
+        this.reconnect(err)
       }
-    })
+    })    
+  }
+  // measure soil humidity
+  measureSoil() {
+    this.sendMessage("r")
   }
   // measure enviroment temp & humidity
   measureEnv() {
-    this.serialPort.write("e", (err, results) => {
-      if (err) {
-        this.errHandlerFunc(err)
-      }
-    })
+    this.sendMessage("e")
   }
   // open valve
   openValve() {
-    this.serialPort.write("p", (err, results) => {
-      if (err) {
-        this.errHandlerFunc(err)
-      }
-    })
+    this.sendMessage("p")
   }
 }
 
