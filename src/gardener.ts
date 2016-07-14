@@ -14,6 +14,7 @@ export class Gardener implements GardenerI {
   private db: db.DatabaseI
   private board: BoardI
   private schedule: NodeJS.Timer
+  private schedule2: NodeJS.Timer
 
   constructor(db,serialHandler) {
     this.db = db
@@ -53,8 +54,12 @@ export class Gardener implements GardenerI {
       this.schedule = setInterval(() => {
         // Clear the local timer variable, indicating the timeout has been triggered.
         this.board.measureEnv()
+      }, 120000)
+      clearInterval(this.schedule2)
+      this.schedule2 = setInterval(() => {
+        // Clear the local timer variable, indicating the timeout has been triggered.
         this.board.measureSoil()
-      }, 60000)
+      }, 67000)      
       return port
     })
   }
