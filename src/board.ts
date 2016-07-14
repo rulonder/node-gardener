@@ -2,7 +2,7 @@
 import * as _ from "lodash"
 import * as Promise from "bluebird"
 
-let REG_has_usb : RegExp = /(usb|USB)/
+let REG_has_usb : RegExp = /(usb|USB|rfcomm)/
 
 export interface BoardI {
   measureSoil: Function
@@ -91,6 +91,7 @@ export class Board implements BoardI {
       var type: string = data.type
       this.dataHandler(value, type)
     } catch (err) {
+      console.log("Data from Serialport :: ",data)
       this.errHandlerFunc(err)
     }
   }
