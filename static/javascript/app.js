@@ -1,4 +1,7 @@
 var request = require('superagent')
+var KalmanFilter = require('kalmanjs').default;
+
+
 
 console.log("test")
 
@@ -21,6 +24,12 @@ function getvalues(){
       .end(function(err, res) {
         var results = res.body
         var dataset = results.values;
+        var kf = new KalmanFilter({R: 0.01, Q: 3});
+        var dataConstantKalman = dataset.map(function(v) {
+          value =  kalmanFilter.filter(v.value);
+          created = v.created
+          return {value:value, created:created}
+        });        
         generateplot(dataset, "#chart2")
       })
       request
