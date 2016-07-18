@@ -1,5 +1,5 @@
 var request = require('superagent')
-var KalmanFilter = require('kalmanjs').default;
+var KalmanFilter = require('kalmanjs')
 
 
 
