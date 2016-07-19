@@ -26,7 +26,7 @@ function getvalues(){
         var dataset = results.values;
         var kf = new KalmanFilter({R: 0.01, Q: 3});
         var dataConstantKalman = dataset.map(function(v) {
-          var value =  KalmanFilter.filter(v.value);
+          var value =  kf.filter(v.value);
           return {value:value, created:v.created}
         });        
         generateplot(dataset, "#chart2")
