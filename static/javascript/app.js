@@ -29,7 +29,7 @@ function getvalues(){
           var value =  kf.filter(v.value);
           return {value:value, created:v.created}
         });        
-        generateplot(dataset, "#chart2")
+        generateplot(dataConstantKalman, "#chart2")
       })
       request
         .get('/api//measurements/soil')
