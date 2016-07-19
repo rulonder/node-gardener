@@ -16,7 +16,12 @@ function getvalues(){
         var results = res.body
         var dataset = results.values;
         //Create SVG element
-        generateplot(dataset, "#chart")
+        var kf = new KalmanFilter({R: 0.01, Q: 3});
+        var dataConstantKalman = dataset.map(function(v) {
+          var value =  kf.filter(v.value);
+          return {value:value, created:v.created}
+        });        
+        generateplot(dataConstantKalman, "#chart")
       })
     request
       .get('/api//measurements/temperature')
