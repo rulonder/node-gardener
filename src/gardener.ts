@@ -49,17 +49,19 @@ export class Gardener implements GardenerI {
     return this.board.setPort(port).then((result) => {
       this.board.measureEnv()
       this.board.measureSoil()
+      this.board.measureTank()      
       // Setup the timeout handler
       clearInterval(this.schedule)
       this.schedule = setInterval(() => {
         // Clear the local timer variable, indicating the timeout has been triggered.
         this.board.measureEnv()
-      }, 120000)
+      }, 60000)
       clearInterval(this.schedule2)
       this.schedule2 = setInterval(() => {
         // Clear the local timer variable, indicating the timeout has been triggered.
         this.board.measureSoil()
-      }, 67000)      
+        this.board.measureTank()        
+      }, 61000)      
       return port
     })
   }

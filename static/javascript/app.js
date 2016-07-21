@@ -51,7 +51,15 @@ function getvalues(){
           var results = res.body
           var dataset = results.values;
           generateplot(dataset, "#chart4")
-        })        
+        })  
+      request
+        .get('/api//measurements/pump')
+        .set('x-access-token', token)
+        .end(function(err, res) {
+          var results = res.body
+          var dataset = results.values;
+          generateplot(dataset, "#chart5")
+        })                   
       // get list of ports  
       request
         .get('/api/ports')

@@ -6,6 +6,7 @@ let REG_has_usb : RegExp = /(usb|USB|rfcomm)/
 
 export interface BoardI {
   measureSoil: Function
+  measureTank: Function
   openValve: Function
   setPort: Function
   getPort: Function
@@ -107,6 +108,10 @@ export class Board implements BoardI {
   measureSoil() {
     this.sendMessage("r")
   }
+  // measure soil humidity
+  measureTank() {
+    this.sendMessage("t")
+  }  
   // measure enviroment temp & humidity
   measureEnv() {
     this.sendMessage("e")
@@ -115,6 +120,10 @@ export class Board implements BoardI {
   openValve() {
     this.sendMessage("p")
   }
+  // open valve
+  closeValve() {
+    this.sendMessage("s")
+  }  
 }
 
 export function getPorts( serialHandler ) {
