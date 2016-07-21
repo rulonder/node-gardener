@@ -234,6 +234,15 @@ function openValve() {
     })
 }
 
+function closeValve() {
+  request
+    .get('/api/valve/close')
+    .set('x-access-token', token)
+    .end(function(err, res) {
+      var results = res.body
+    })
+}
+
 // assign on click events to buttons
 
 login_button = document.getElementById("login")
@@ -242,6 +251,8 @@ login_button = document.getElementById("logout")
 login_button.addEventListener('click', logout ) 
 openValve_button = document.getElementById("openValve")
 openValve_button.addEventListener('click', openValve ) 
+closeValve_button = document.getElementById("closeValve")
+closeValve_button.addEventListener('click', closeValve ) 
 // hide elements
 if (!token) {
   logout()

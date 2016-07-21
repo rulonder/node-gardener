@@ -46,6 +46,9 @@ router.post("/ports/main",  (req  , res ) => {
     })
 })
 
+router.get("/valve/close", (req: express.Request,res: express.Response) =>{
+  return res.json(gardener.closeValve())
+})
 
 router.get("/valve/open", (req: express.Request,res: express.Response) =>{
   return res.json(gardener.openValve())

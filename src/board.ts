@@ -7,6 +7,7 @@ let REG_has_usb : RegExp = /(usb|USB|rfcomm)/
 export interface BoardI {
   measureSoil: Function
   measureTank: Function
+  closeValve: Function
   openValve: Function
   setPort: Function
   getPort: Function

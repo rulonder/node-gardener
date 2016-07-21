@@ -40,6 +40,10 @@ export class Gardener implements GardenerI {
     return {status:"open"}
   }
 
+  closeValve() {
+    this.board.closeValve()
+    return {status:"close"}
+  }
 
   listPorts(serialHandler) { return getPorts(serialHandler) }
 
