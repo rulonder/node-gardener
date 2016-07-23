@@ -56,7 +56,7 @@ export class Board implements BoardI {
             this.serialPort.on('data', (data) => {
               this.dataParse(data)
             })
-            this.serialPort.on('close', (err) => {
+            this.serialPort.on('disconnect', (err) => {
               this.reconnect(err)
             })            
             this.serialPort.on('error', (err) => {
