@@ -45,6 +45,9 @@ export class Board implements BoardI {
           baudrate: 9600,
           parser: this.serialHandler.parsers.readline("\n")
         }        
+        if (this.serialPort ) {
+            this.serialPort.close()
+        }
         this.serialPort = new this.serialHandler.SerialPort(port, options,false)
         this.serialPort.open( (error) => {
           if (error) {
