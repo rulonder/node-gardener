@@ -1,31 +1,32 @@
 /* Simple Serial ECHO script : Written by ScottC 03/07/2012 */
 #include <stdlib.h>
 #include <ArduinoJson.h>
-#include <idDHT11.h>
-#include "Timer.h"
+#include <DHT.h>
 #include <NewPing.h>
+// definitions
 #define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on ping sensor.
 #define ECHO_PIN     11  // Arduino pin tied to echo pin on ping sensor.
 #define MAX_DISTANCE 100 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); 
 unsigned int pingSpeed = 50; // How frequently are we going to send out a ping (in milliseconds). 50ms would be 20 times a second.
 unsigned long pingTimer;     // Holds the next ping time.
-
+// time from start
+unsigned long time;
+unsigned long time_start_pump;
+unsigned long time_end_pump;
+boolean is_pump = false;
 /* Use a variable called byteRead to temporarily stopre
    the data coming from the computer */
 int byteRead;
 // configure dht11 sensor
-int idDHT11pin = 2; //Digital pin for comunications
-int idDHT11intNumber = 0; //interrupt number (must be the one that use the previus defined pin
-//declaration
-void dht11_wrapper(); // must be declared before the lib initialization
+// #define DHTTYPE DHT22 
+#define DHTPIN 2  //Digital pin for comunications to the temp/humidity sensor
+#define DHTTYPE DHT11 
+
 //json buffer
 StaticJsonBuffer<200> jsonBuffer;
 JsonObject& root = jsonBuffer.createObject();
-// Lib instantiate
-idDHT11 DHT11(idDHT11pin,idDHT11intNumber,dht11_wrapper);
-// define Timer
-Timer t;
+
 // analog pins for soil humidity, the sensor pin switch it on
 // so we can avoid it degradationdue to the electrolisis
 int analogPin = 0;
@@ -43,17 +44,17 @@ const char * TANK="tank";
 const char * TEMP="temperature";
 const char * HUMI="humidity";
 const char * PUMP="pump";
-// This wrapper is in charge of calling
-// mus be defined like this for the lib work
-void dht11_wrapper() {
-  DHT11.isrCallback();
-}
+
+// Initialize DHT sensor.
+DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
 // Turn the Serial Protocol ON
   Serial.begin(9600);
   pinMode(pumpPin,OUTPUT);
   pinMode(sensorPin,OUTPUT);
+  digitalWrite(pumpPin,LOW);
+  dht.begin();
 }
 
 void loop() {
@@ -64,7 +65,13 @@ void loop() {
     /*ECHO the value that was read, back to the serial port. */
     processInput((char)byteRead);
   }
-  t.update();
+  time = millis();
+  if (is_pump){
+    // check for time or time overflow
+    if (time < time_start_pump || time > time_end_pump){
+        stopPump();
+      } 
+  }
   
 }
 
@@ -117,38 +124,20 @@ void processInput(char Input) {
 // read enviroment through dht11
 void readEnv()
 {
-  int result = DHT11.acquireAndWait();
-  switch (result)
-  {
-  case IDDHTLIB_OK:
-    returnValue(DHT11.getHumidity(),false,HUMI);
-    returnValue(DHT11.getCelsius(),false,TEMP);
-    break;
-  case IDDHTLIB_ERROR_CHECKSUM:
-    printError("Error\n\r\tChecksum error",TEMP);
-    break;
-  case IDDHTLIB_ERROR_ISR_TIMEOUT:
-    printError("Error\n\r\tISR time out error",TEMP);
-    break;
-  case IDDHTLIB_ERROR_RESPONSE_TIMEOUT:
-    printError("Error\n\r\tResponse time out error",TEMP);
-    break;
-  case IDDHTLIB_ERROR_DATA_TIMEOUT:
-    printError("Error\n\r\tData time out error",TEMP);
-    break;
-  case IDDHTLIB_ERROR_ACQUIRING:
-    printError("Error\n\r\tAcquiring",TEMP);
-    break;
-  case IDDHTLIB_ERROR_DELTA:
-    printError("Error\n\r\tDelta time to small",TEMP);
-    break;
-  case IDDHTLIB_ERROR_NOTSTARTED:
-    printError("Error\n\r\tNot started",TEMP);
-    break;
-  default:
-    printError("Unknown error",TEMP);
-    break;
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) ) {
+    printError("Failed to read from DHT sensor!",TEMP);
+    return;
+  } else {
+    returnValue(h,false,HUMI);
+    returnValue(t,false,TEMP);
   }
+  
 }
 
 
@@ -179,16 +168,21 @@ float readDistance() {
 }
 // pump start
 void pump() {
-  returnValue(1,false,PUMP);
-  digitalWrite(pumpPin, HIGH);
-  // stop pump after 1 minute
-  unsigned long duration = 60000  ;
-  int afterEvent = t.after(duration,stopPump);
+  if (!is_pump){
+    returnValue(1,false,PUMP);
+    digitalWrite(pumpPin, HIGH);
+    // stop pump after 1 minute
+    unsigned long duration = 60000  ;
+    time_start_pump = millis();
+    time_end_pump = time_start_pump + duration;
+    is_pump = true;
+  }
 }
 // stop pump
 void stopPump() {
   digitalWrite(pumpPin,LOW); 
   returnValue(0,false,PUMP); 
+  is_pump = false;
 }
 
 
